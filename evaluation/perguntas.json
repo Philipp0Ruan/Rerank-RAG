@@ -1,0 +1,27 @@
+{
+  "obra": "Os Sertões",
+  "autor": "Euclides da Cunha",
+  "fonte_pdf": "https://fundar.org.br/wp-content/uploads/2021/06/os-sertoes.pdf",
+  "perguntas": [
+    {
+      "id": "Q1",
+      "pergunta": "Qual é a visão de Euclides da Cunha sobre o ambiente natural do sertão nordestino e como ele influencia a vida dos habitantes?"
+    },
+    {
+      "id": "Q2",
+      "pergunta": "Quais são as principais características da população sertaneja descritas por Euclides da Cunha? Como ele relaciona essas características com o ambiente em que vivem?"
+    },
+    {
+      "id": "Q3",
+      "pergunta": "Qual foi o contexto histórico e político que levou à Guerra de Canudos, segundo Euclides da Cunha?"
+    },
+    {
+      "id": "Q4",
+      "pergunta": "Como Euclides da Cunha descreve a figura de Antônio Conselheiro e seu papel na Guerra de Canudos?"
+    },
+    {
+      "id": "Q5",
+      "pergunta": "Quais são os principais aspectos da crítica social e política presentes em \"Os Sertões\"? Como esses aspectos refletem a visão do autor sobre o Brasil da época?"
+    }
+  ]
+}

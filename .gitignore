@@ -1,0 +1,36 @@
+# Planejamento pessoal (somente local)
+/CHECKLIST_EXECUCAO.md
+/RESUMO_LOCAL.md
+
+# Credenciais e ambientes
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+
+# Python e Jupyter
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.ipython/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Livro, texto extraído e índices locais
+/data/*
+!/data/.gitkeep
+/storage/
+.cache/
+
+# Resultados temporários; resultados revisados poderão ser versionados
+/results/tmp/
+
+# Sistema e editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
