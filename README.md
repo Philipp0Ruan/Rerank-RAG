@@ -45,6 +45,10 @@ results/                     # respostas e avaliações, quando forem geradas
 
 Arquivos: [rerank_rag.py](rerank_rag.py) e [notebooks/rerank_rag.ipynb](notebooks/rerank_rag.ipynb).
 
+## Continuidade do desenvolvimento
+
+O [resume.md](resume.md) registra o andamento deste projeto e as próximas etapas. O controle detalhado fica no arquivo local `CHECKLIST_EXECUCAO.md`, ignorado pelo Git.
+
 ## Desenvolvimento e execução
 
 Vamos implementar a base Python e o notebook por etapas: preparar o ambiente, carregar e conferir o livro, construir a recuperação, gerar as respostas e avaliar as evidências.
