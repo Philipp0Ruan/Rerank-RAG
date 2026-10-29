@@ -1,0 +1,19 @@
+{
+  "pdf_url": "https://fundar.org.br/wp-content/uploads/2021/06/os-sertoes.pdf",
+  "pdf_sha256": "c3f1dd4922d66c9bf1e7e6163882fe4b19bc45bf7a61c240aefb3b7b5dd99943",
+  "first_pdf_page": 33,
+  "last_pdf_page": 653,
+  "printed_page_offset": 30,
+  "embedding_model": "intfloat/multilingual-e5-small",
+  "embedding_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+  "chunk_tokens": 350,
+  "overlap_tokens": 50,
+  "top_k": 8,
+  "max_context_chars": 16000,
+  "batch_size": 16,
+  "max_output_tokens": 4096,
+  "min_similarity": null,
+  "candidate_k": 24,
+  "reranker_model": "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1",
+  "reranker_revision": "1427fd652930e4ba29e8149678df786c240d8825"
+}

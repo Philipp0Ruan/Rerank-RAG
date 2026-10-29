@@ -1,85 +1,97 @@
 # Rerank RAG — Os Sertões
 
-Este projeto vai responder perguntas sobre **Os Sertões** usando duas etapas de seleção de contexto. Primeiro, a busca por similaridade encontra trechos candidatos. Depois, um modelo de reranking reavalia a relação de cada trecho com a pergunta e reorganiza os resultados.
+Recupera candidatos por similaridade e usa um CrossEncoder para reordená-los antes de montar o contexto do LLM.
 
-Faz parte do Desafio RAG, com três abordagens em repositórios separados:
-[Naive RAG](https://github.com/Philipp0Ruan/Naive-RAG),
-[Parent RAG](https://github.com/Philipp0Ruan/Parent-RAG) e
-[Rerank RAG](https://github.com/Philipp0Ruan/Rerank-RAG).
+Implementação em [rerank_rag.py](rerank_rag.py), com base de extração e geração em [rag_base.py](rag_base.py). O [notebook](notebooks/rerank_rag.ipynb) usa as mesmas funções. Este repositório é independente dos outros experimentos.
 
 ## Situação atual
 
-A estrutura inicial está pronta nos formatos Python (.py) e Jupyter Notebook (.ipynb). Os dois compartilham a base Python e o roteiro de desenvolvimento; a leitura do PDF, a recuperação e a geração das respostas ainda serão implementadas. Ainda não há respostas geradas nem resultados de avaliação.
+O pipeline está implementado. A validação atual usa apenas documentos, vetores e respostas fictícias, sem chamar a OpenAI. O notebook começa no modo simulado. A execução com o livro, os modelos reais e a geração da OpenAI fica pendente da aprovação do usuário.
 
-## Como vai funcionar
+## Recuperação
 
-```text
-PDF → trechos → embeddings → busca de candidatos → reranking → seleção final → resposta com fontes
-```
+São recuperados até 24 candidatos por cosseno; o reranker seleciona até oito. O modelo é `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1`, na revisão `1427fd652930e4ba29e8149678df786c240d8825`. Os relatórios mostram IDs, posições e pontuações antes/depois, além do tempo de reranking. Pares são limitados a 512 tokens pelo reranker; entradas longas podem ser truncadas.
 
-- **Buscar candidatos:** Recuperar um conjunto inicial de trechos por similaridade; definir candidate_k maior que final_k.
-- **Aplicar o reranking:** Escolher um reranker com suporte adequado ao português e registrar nome, versão, pontuações e tempo da reordenação.
-- **Selecionar o contexto final:** Reordenar os candidatos pelo reranker e enviar somente os final_k selecionados, com fontes e páginas. Exibir a ordem antes e depois.
+Os embeddings reais usam `intfloat/multilingual-e5-small`, revisão `614241f622f53c4eeff9890bdc4f31cfecc418b3`, com prefixos `passage: ` e `query: `. O contexto usa trechos inteiros até 16.000 caracteres. Similaridade e pontuação de reranking não são probabilidades de acerto.
 
-Vamos usar a mesma divisão de texto e os mesmos embeddings do Naive RAG. Assim será possível avaliar o efeito do reranking, incluindo o tempo extra de processamento.
+## Python e Jupyter
 
-## Perguntas do desafio
-
-1. Qual é a visão de Euclides da Cunha sobre o ambiente natural do sertão nordestino e como ele influencia a vida dos habitantes?
-2. Quais são as principais características da população sertaneja descritas por Euclides da Cunha? Como ele relaciona essas características com o ambiente em que vivem?
-3. Qual foi o contexto histórico e político que levou à Guerra de Canudos, segundo Euclides da Cunha?
-4. Como Euclides da Cunha descreve a figura de Antônio Conselheiro e seu papel na Guerra de Canudos?
-5. Quais são os principais aspectos da crítica social e política presentes em "Os Sertões"? Como esses aspectos refletem a visão do autor sobre o Brasil da época?
-
-As perguntas também estão em [evaluation/perguntas.json](evaluation/perguntas.json), com identificadores iguais nos três projetos.
-
-## Organização
-
-```text
-rerank_rag.py                    # base Python e roteiro do experimento
-notebooks/rerank_rag.ipynb   # notebook com etapas e uso da base Python
-evaluation/perguntas.json     # cinco perguntas do desafio
-data/                        # PDF e dados extraídos, somente locais
-results/                     # respostas e avaliações, quando forem geradas
-```
-
-Arquivos: [rerank_rag.py](rerank_rag.py) e [notebooks/rerank_rag.ipynb](notebooks/rerank_rag.ipynb).
-
-## Continuidade do desenvolvimento
-
-O [resume.md](resume.md) registra o andamento deste projeto e as próximas etapas. O controle detalhado fica no arquivo local `CHECKLIST_EXECUCAO.md`, ignorado pelo Git.
-
-## Desenvolvimento e execução
-
-Vamos implementar a base Python e o notebook por etapas: preparar o ambiente, carregar e conferir o livro, construir a recuperação, gerar as respostas e avaliar as evidências.
-
-Python e Jupyter serão usados para o experimento. O provedor do LLM, os modelos, as bibliotecas e suas versões serão definidos na implementação. As instruções de instalação e execução serão adicionadas aqui depois de validadas. Por enquanto, os arquivos carregam as perguntas e apresentam o roteiro; o pipeline RAG ainda será implementado.
-
-## Usar os dois formatos
-
-Na pasta do projeto, execute a preparação em Python:
+Use Python 3.12. Para apenas simulação e notebook:
 
 ```powershell
-python rerank_rag.py
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-simulated.txt
+.\.venv\Scripts\python.exe rerank_rag.py simular
+.\.venv\Scripts\python.exe -m jupyterlab notebooks/rerank_rag.ipynb
 ```
 
-O comando mostra as etapas e as cinco perguntas. Usa apenas a biblioteca padrão do Python, sem precisar de chave de API.
+Depois da aprovação, instale as dependências reais:
 
-Para usar o Jupyter, abra `notebooks/rerank_rag.ipynb` no JupyterLab ou no VS Code com suporte a notebooks e selecione um kernel Python. Execute as células em ordem. O notebook importa a base `rerank_rag.py`, mantendo as perguntas e as futuras funções em um só lugar.
+```powershell
+.\.venv\Scripts\python.exe -m pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cpu
+.\.venv\Scripts\python.exe -m pip install -r requirements-notebook.txt
+Copy-Item .env.example .env
+.\.venv\Scripts\python.exe rerank_rag.py indexar
+.\.venv\Scripts\python.exe rerank_rag.py avaliar
+```
 
-A validação inicial foi feita com Python 3.12. A instalação do Jupyter e das dependências de RAG será definida na etapa de ambiente.
+Configure `OPENAI_API_KEY` apenas no `.env`; nunca no notebook ou no Git. O modelo de geração inicial é `gpt-5-mini`, configurável por `OPENAI_MODEL`. A chave e os dados não são compartilhados com os outros projetos.
 
-## Como avaliar
+Os comandos `buscar "pergunta"`, `responder "pergunta"`, `avaliar --somente-busca` e `indexar --refazer` também estão disponíveis. No notebook, os modos são `simulado`, `somente_busca` e `real`.
 
-O notebook deve mostrar candidatos, ordem e pontuações antes/depois do reranking e gerar a resposta com os trechos da seleção final.
+## Corpus e avaliação
 
-Para cada pergunta, vamos guardar a resposta, os trechos utilizados, as páginas, os parâmetros e o tempo de execução. A revisão vai conferir se a resposta atende à pergunta e se as fontes sustentam o que o modelo escreveu. Afirmações sem evidência devem ser identificadas, e o modelo deve indicar quando o contexto for insuficiente.
+As cinco perguntas estão em [evaluation/perguntas.json](evaluation/perguntas.json). A edição do PDF é identificada por SHA-256 no [config.json](config.json); o corpus real inclui páginas físicas 33 a 653, da nota preliminar às notas de Euclides à segunda edição. A página impressa corresponde à página PDF menos 30.
 
-Na comparação entre os projetos, vamos manter o mesmo PDF, as mesmas perguntas e, sempre que possível, o mesmo modelo de geração, embeddings, prompt e limite de contexto. As diferenças de configuração serão registradas junto dos resultados.
+Apresentação, prefácio, sumário e créditos externos ao corpus são excluídos. As notas de rodapé permanecem; notas editoriais `(PRP)` devem ser distinguidas do texto do autor. A extração pode conservar marcas de capitulares e ligaturas.
 
-## Material de referência
+Resultados são exportados localmente em JSON e Markdown com fontes, páginas, configuração e tempos. Uso de tokens vem da API quando disponível; custo fica `null`. O verificador identifica páginas citadas fora do contexto, mas a sustentação das afirmações exige revisão humana.
 
-- [PDF de Os Sertões disponibilizado pela Fundar](https://fundar.org.br/wp-content/uploads/2021/06/os-sertoes.pdf).
-- [Solução de referência da Rocketseat](https://github.com/rocketseat-education/ia-para-devs/tree/master/Desafio%20RAG).
+A simulação usa um índice temporário, bloqueia rede e cliente OpenAI real e não lê credenciais. Seus relatórios têm `simulado: true`, `api_real_executada: false` e respostas marcadas como fictícias. Ela valida integração; não mede qualidade semântica nem desempenho de modelos reais.
 
-O PDF será salvo localmente em `data/os-sertoes.pdf`. A edição inclui material editorial; vamos separar esse conteúdo do texto de Euclides antes de avaliar as respostas e distinguir o número da página no PDF da numeração impressa no livro.
+O andamento e as pendências ficam em [resume.md](resume.md). O checklist de execução e os testes são apenas locais.
+
+## Referências
+
+- [PDF da obra](https://fundar.org.br/wp-content/uploads/2021/06/os-sertoes.pdf).
+- [Desafio da Rocketseat](https://github.com/rocketseat-education/ia-para-devs/tree/master/Desafio%20RAG).
+- [Modelo de embeddings](https://huggingface.co/intfloat/multilingual-e5-small).
+
+## Docker
+
+Dentro deste repositório, execute o cenário simulado:
+
+```powershell
+docker compose build rag
+docker compose run --rm rag
+```
+
+Para abrir o Jupyter:
+
+```powershell
+docker compose up notebook
+```
+
+O Jupyter fica em http://localhost:8890; use o token informado no terminal. O notebook começa com `MODO = "simulado"`. A simulação não precisa de chave, PDF nem download de modelos. Os relatórios são salvos localmente em `results/`.
+
+A imagem padrão usa o alvo leve `simulation`. O alvo `runtime` instala também os modelos locais via dependências PyTorch/Sentence Transformers; o download dos pesos acontece na primeira indexação. Depois da aprovação para os testes reais:
+
+```powershell
+Copy-Item .env.example .env
+# Preencha a chave somente no .env local.
+docker compose --profile real build real
+docker compose --profile real run --rm real python rerank_rag.py indexar
+docker compose --profile real run --rm real
+```
+
+Mantenha o `.env` existente se ele já estiver configurado. A imagem não inclui credenciais, dados locais, índices, testes ou relatórios. As pastas de dados, cache, índice e resultados são montadas como volumes na execução real.
+
+O Jupyter padrão usa a imagem simulada. Para um notebook com modelos reais, depois da aprovação:
+
+```powershell
+docker compose --profile real run --rm -p 127.0.0.1:8890:8888 -v ./notebooks:/app/notebooks real python -m jupyterlab --ip=0.0.0.0 --port=8888 --no-browser --ServerApp.root_dir=/app
+```
+
+## Versionamento
+
+Os testes e relatórios ficam apenas no computador, ignorados pelo Git e pelo contexto Docker. O comando `simular` faz parte da aplicação e permite conferir o fluxo a partir de um clone novo. Os commits novos usam prefixos como `feat:`, `fix:`, `chore:` e `docs:`.

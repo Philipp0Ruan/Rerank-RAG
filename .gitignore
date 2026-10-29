@@ -34,3 +34,9 @@ htmlcov/
 Thumbs.db
 .vscode/
 .idea/
+
+# Validação local
+/tests/
+/results/*
+!/results/.gitkeep
+/requirements-lock.txt
