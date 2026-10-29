@@ -9,7 +9,7 @@ Faz parte do Desafio RAG, com três abordagens em repositórios separados:
 
 ## Situação atual
 
-A estrutura inicial está pronta. O notebook contém o roteiro de desenvolvimento; a leitura do PDF, a recuperação e a geração das respostas ainda serão implementadas. Ainda não há respostas geradas nem resultados de avaliação.
+A estrutura inicial está pronta nos formatos Python (.py) e Jupyter Notebook (.ipynb). Os dois compartilham a base Python e o roteiro de desenvolvimento; a leitura do PDF, a recuperação e a geração das respostas ainda serão implementadas. Ainda não há respostas geradas nem resultados de avaliação.
 
 ## Como vai funcionar
 
@@ -36,19 +36,34 @@ As perguntas também estão em [evaluation/perguntas.json](evaluation/perguntas.
 ## Organização
 
 ```text
-notebooks/rerank_rag.ipynb   # roteiro do experimento
+rerank_rag.py                    # base Python e roteiro do experimento
+notebooks/rerank_rag.ipynb   # notebook com etapas e uso da base Python
 evaluation/perguntas.json     # cinco perguntas do desafio
 data/                        # PDF e dados extraídos, somente locais
 results/                     # respostas e avaliações, quando forem geradas
 ```
 
-O notebook fica em [notebooks/rerank_rag.ipynb](notebooks/rerank_rag.ipynb).
+Arquivos: [rerank_rag.py](rerank_rag.py) e [notebooks/rerank_rag.ipynb](notebooks/rerank_rag.ipynb).
 
 ## Desenvolvimento e execução
 
-Vamos implementar o notebook por etapas: preparar o ambiente, carregar e conferir o livro, construir a recuperação, gerar as respostas e avaliar as evidências.
+Vamos implementar a base Python e o notebook por etapas: preparar o ambiente, carregar e conferir o livro, construir a recuperação, gerar as respostas e avaliar as evidências.
 
-Python e Jupyter serão usados para o experimento. O provedor do LLM, os modelos, as bibliotecas e suas versões serão definidos na implementação. As instruções de instalação e execução serão adicionadas aqui depois de validadas. Por enquanto, o notebook é um roteiro e não executa um pipeline RAG.
+Python e Jupyter serão usados para o experimento. O provedor do LLM, os modelos, as bibliotecas e suas versões serão definidos na implementação. As instruções de instalação e execução serão adicionadas aqui depois de validadas. Por enquanto, os arquivos carregam as perguntas e apresentam o roteiro; o pipeline RAG ainda será implementado.
+
+## Usar os dois formatos
+
+Na pasta do projeto, execute a preparação em Python:
+
+```powershell
+python rerank_rag.py
+```
+
+O comando mostra as etapas e as cinco perguntas. Usa apenas a biblioteca padrão do Python, sem precisar de chave de API.
+
+Para usar o Jupyter, abra `notebooks/rerank_rag.ipynb` no JupyterLab ou no VS Code com suporte a notebooks e selecione um kernel Python. Execute as células em ordem. O notebook importa a base `rerank_rag.py`, mantendo as perguntas e as futuras funções em um só lugar.
+
+A validação inicial foi feita com Python 3.12. A instalação do Jupyter e das dependências de RAG será definida na etapa de ambiente.
 
 ## Como avaliar
 
